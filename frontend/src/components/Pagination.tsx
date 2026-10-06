@@ -1,0 +1,5 @@
+import type { Pagination as PageMetadata } from '../types/transactions';
+
+export function Pagination({ pagination, disabled, onPage, onSize }: { pagination: PageMetadata; disabled: boolean; onPage: (page: number) => void; onSize: (size: number) => void }) {
+  return <div className="pagination"><p>{pagination.totalItems} {pagination.totalItems === 1 ? 'movimiento' : 'movimientos'}<span> · Página {pagination.page} de {Math.max(1, pagination.totalPages)}</span></p><label>Por página<select value={pagination.pageSize} disabled={disabled} onChange={event => onSize(Number(event.target.value))}>{[10, 20, 50, 100].map(size => <option key={size}>{size}</option>)}</select></label><div className="pagination-buttons"><button className="button quiet" disabled={disabled || pagination.page <= 1} onClick={() => onPage(pagination.page - 1)}>← Anterior</button><button className="button quiet" disabled={disabled || pagination.page >= pagination.totalPages} onClick={() => onPage(pagination.page + 1)}>Siguiente →</button></div></div>;
+}

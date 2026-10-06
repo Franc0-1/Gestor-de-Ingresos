@@ -9,6 +9,10 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"finance-app/internal/handlers"
+	"finance-app/internal/repository"
+	"finance-app/internal/services"
 )
 
 func main() {
@@ -18,12 +22,27 @@ func main() {
 }
 
 func run() error {
+	repo, err := repository.NewExcelRepository("data/finanzas.xlsx")
+	if err != nil {
+		return err
+	}
+
 	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	mux := http.NewServeMux()
+	accountService := services.NewAccountService(repo.Accounts)
+	handlers.NewAccountHandler(accountService).RegisterRoutes(mux)
+	categoryService := services.NewCategoryService(repo.Categories)
+	handlers.NewCategoryHandler(categoryService).RegisterRoutes(mux)
+	transactionService := services.NewTransactionService(repo.Transactions, repo.Accounts, repo.Categories)
+	handlers.NewTransactionHandler(transactionService).RegisterRoutes(mux)
+	transferService := services.NewTransferService(repo.Transfers, repo.Accounts)
+	handlers.NewTransferHandler(transferService).RegisterRoutes(mux)
+	dashboardService := services.NewDashboardService(repo.Accounts, repo.Categories, repo.Transactions, repo.Transfers)
+	handlers.NewDashboardHandler(dashboardService).RegisterRoutes(mux)
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if _, err := w.Write([]byte("{\"status\":\"ok\"}\n")); err != nil {
