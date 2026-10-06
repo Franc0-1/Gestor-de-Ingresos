@@ -1,0 +1,35 @@
+.env
+.env.*
+*.env
+
+# Binarios y resultados de compilación
+/bin/
+/dist/
+/server
+/server.exe
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+
+# Archivos temporales y cobertura
+/tmp/
+/temp/
+*.tmp
+*.log
+*.out
+coverage/
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Almacenamiento personal futuro
+/data/*.xlsx
